@@ -41,9 +41,7 @@ def user_login(request: HttpRequest) -> HttpResponse:
         if form.is_valid():
             username: str = form.cleaned_data["username"]
             password: str = form.cleaned_data["password"]
-            user = authenticate(
-                request, username=username, password=password
-            )
+            user = authenticate(request, username=username, password=password)
 
             if user is not None:
                 if user.is_active:
@@ -53,8 +51,7 @@ def user_login(request: HttpRequest) -> HttpResponse:
             else:
                 messages.info(
                     request,
-                    "Something went wrong, maybe check your provided "
-                    "credentials or try again.",
+                    "Something went wrong, maybe check your provided " "credentials or try again.",
                 )
     else:
         form = LoginForm()

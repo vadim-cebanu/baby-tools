@@ -32,9 +32,7 @@ def product_detail(request, category_slug, pk):
     related_products = (
         Product.objects.filter(category=product.category)
         .exclude(pk=product.pk)
-        .annotate(
-            avg_rating=Avg("comments__rating"), total_ratings=Count("comments")
-        )
+        .annotate(avg_rating=Avg("comments__rating"), total_ratings=Count("comments"))
         .order_by("-avg_rating", "-total_ratings", "name")[:8]
     )
 
@@ -43,9 +41,7 @@ def product_detail(request, category_slug, pk):
     if request.method == "POST":
         form = CommentForm(
             request.POST,
-            initial={
-                "user": request.user if request.user.is_authenticated else None
-            },
+            initial={"user": request.user if request.user.is_authenticated else None},
         )
         if form.is_valid():
             rating = form.cleaned_data["rating"]
@@ -64,9 +60,7 @@ def product_detail(request, category_slug, pk):
                     comment.save()
                 messages.success(
                     request,
-                    "Your rating was {}.".format(
-                        "submitted" if created else "updated"
-                    ),
+                    "Your rating was {}.".format("submitted" if created else "updated"),
                 )
             else:
                 # Guest: create a new comment (no uniqueness constraint)
@@ -75,9 +69,7 @@ def product_detail(request, category_slug, pk):
                 comment.save()
                 messages.success(request, "Thank you for your rating.")
 
-            return redirect(
-                "product_detail", category_slug=category_slug, pk=product.pk
-            )
+            return redirect("product_detail", category_slug=category_slug, pk=product.pk)
     else:
         # Pre-fill form for authenticated user with existing comment (if any)
         initial = {}

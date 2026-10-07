@@ -7,13 +7,9 @@ from django.db import models
 
 # Create your models here.
 class Category(models.Model):
-    name = models.CharField(
-        max_length=50, unique=True, null=False, blank=False
-    )
+    name = models.CharField(max_length=50, unique=True, null=False, blank=False)
     description = models.TextField(max_length=200, null=True, blank=True)
-    slug = models.SlugField(
-        max_length=50, unique=True, null=False, blank=False
-    )
+    slug = models.SlugField(max_length=50, unique=True, null=False, blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -28,13 +24,9 @@ class Category(models.Model):
 
 class Product(models.Model):
     tags = models.ManyToManyField("Tag", blank=True, related_name="products")
-    category = models.ForeignKey(
-        Category, null=True, on_delete=models.DO_NOTHING
-    )
+    category = models.ForeignKey(Category, null=True, on_delete=models.DO_NOTHING)
     description = models.TextField(max_length=250, null=True, blank=True)
-    image = models.ImageField(
-        upload_to="imgs/products/", null=True, blank=True
-    )
+    image = models.ImageField(upload_to="imgs/products/", null=True, blank=True)
     name = models.CharField(max_length=80, blank=False, null=False)
     price = models.DecimalField(
         max_digits=6,
@@ -62,9 +54,7 @@ class Product(models.Model):
 
 # NEW model
 class Comment(models.Model):
-    product = models.ForeignKey(
-        Product, related_name="comments", on_delete=models.CASCADE
-    )
+    product = models.ForeignKey(Product, related_name="comments", on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -73,9 +63,7 @@ class Comment(models.Model):
     )
     guest_name = models.CharField(max_length=80, blank=True)
     guest_email = models.EmailField(blank=True)
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)]
-    )
+    rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     text = models.TextField(max_length=400, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -101,9 +89,7 @@ class Comment(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(
-        max_length=50, unique=True, null=False, blank=False
-    )
+    name = models.CharField(max_length=50, unique=True, null=False, blank=False)
     created_at = models.DateTimeField(
         auto_now_add=True,
     )

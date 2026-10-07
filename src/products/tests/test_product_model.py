@@ -11,9 +11,7 @@ class ProductTestCase(TestCase):
 
     @classmethod
     def setUpTestData(self):
-        self.test_category = Category.objects.create(
-            name="Test Category", slug="test-category"
-        )
+        self.test_category = Category.objects.create(name="Test Category", slug="test-category")
         self.test_product_name = "Test Product"
         self.test_product_description = "This is a test product description."
         self.test_product_price = Decimal("19.99")
@@ -31,12 +29,8 @@ class ProductTestCase(TestCase):
         self.assertEqual(Product.objects.count(), 1)
         # check if product attributes are set correctly
         self.assertEqual(Product.objects.first().name, self.test_product_name)
-        self.assertEqual(
-            Product.objects.first().description, self.test_product_description
-        )
-        self.assertEqual(
-            Product.objects.first().price, self.test_product_price
-        )
+        self.assertEqual(Product.objects.first().description, self.test_product_description)
+        self.assertEqual(Product.objects.first().price, self.test_product_price)
         self.assertEqual(Product.objects.first().category, self.test_category)
         # Ensure created_at, updated_at are set
         self.assertIsNotNone(Product.objects.first().created_at)
@@ -52,9 +46,7 @@ class ProductTestCase(TestCase):
         )
         product.full_clean()
         self.assertEqual(product.category.name, self.test_category.name)
-        self.assertTrue(
-            Category.objects.filter(name=product.category.name).exists()
-        )
+        self.assertTrue(Category.objects.filter(name=product.category.name).exists())
 
     @log_execution
     def test_failure_product_creation_without_name(self):
@@ -123,11 +115,7 @@ class ProductTestCase(TestCase):
             product.save()
         self.assertEqual(
             ctx.exception.message_dict,
-            {
-                "price": [
-                    "Ensure that there are no more than 6 digits in total."
-                ]
-            },
+            {"price": ["Ensure that there are no more than 6 digits in total."]},
         )
         self.assertEqual(Product.objects.count(), 0)
 

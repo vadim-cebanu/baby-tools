@@ -13,17 +13,13 @@ class CommentTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Base fixtures
-        cls.category = Category.objects.create(
-            name="Test Category", slug="test-category"
-        )
+        cls.category = Category.objects.create(name="Test Category", slug="test-category")
         cls.product = Product.objects.create(
             name="Test Product",
             price="19.99",
             category=cls.category,
         )
-        cls.user = User.objects.create_user(
-            username="tester", email="tester@example.com", password="pass1234"
-        )
+        cls.user = User.objects.create_user(username="tester", email="tester@example.com", password="pass1234")
         cls.text_content = "This is a test comment."
         cls.valid_rating = 5
 
@@ -41,9 +37,7 @@ class CommentTestCase(TestCase):
         self.assertEqual(stored.product, self.product)
         self.assertEqual(stored.user, self.user)
         self.assertEqual(stored.rating, self.valid_rating)
-        self.assertEqual(
-            stored.text, ""
-        )  # text is optional and defaults to empty
+        self.assertEqual(stored.text, "")  # text is optional and defaults to empty
         self.assertIsNotNone(stored.created_at)
         self.assertIsNotNone(stored.updated_at)
 
@@ -163,11 +157,7 @@ class CommentTestCase(TestCase):
             comment.save()
         self.assertEqual(
             ctx.exception.message_dict,
-            {
-                "__all__": [
-                    "Constraint “unique_user_product_comment” is violated."
-                ]
-            },
+            {"__all__": ["Constraint “unique_user_product_comment” is violated."]},
         )
         self.assertEqual(Comment.objects.count(), 1)
 

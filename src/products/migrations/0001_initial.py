@@ -60,9 +60,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "image",
-                    models.ImageField(
-                        blank=True, null=True, upload_to="imgs/products/"
-                    ),
+                    models.ImageField(blank=True, null=True, upload_to="imgs/products/"),
                 ),
                 ("name", models.CharField(max_length=80)),
                 (
@@ -70,11 +68,7 @@ class Migration(migrations.Migration):
                     models.DecimalField(
                         decimal_places=2,
                         max_digits=6,
-                        validators=[
-                            django.core.validators.MinValueValidator(
-                                Decimal("0.00")
-                            )
-                        ],
+                        validators=[django.core.validators.MinValueValidator(Decimal("0.00"))],
                     ),
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
@@ -143,9 +137,7 @@ class Migration(migrations.Migration):
                 ],
                 "constraints": [
                     models.CheckConstraint(
-                        condition=models.Q(
-                            ("rating__gte", 1), ("rating__lte", 5)
-                        ),
+                        condition=models.Q(("rating__gte", 1), ("rating__lte", 5)),
                         name="comment_rating_range",
                     ),
                     models.UniqueConstraint(
