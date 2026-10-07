@@ -11,9 +11,15 @@ class ProductViewAndCommentFormTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.category = Category.objects.create(name="Toys", slug="toys")
-        cls.product = Product.objects.create(name="Blue Rattle", price="9.99", category=cls.category)
-        cls.user = User.objects.create_user(username="tester", email="t@example.com", password="pass1234")
-        cls.other = User.objects.create_user(username="other", email="o@example.com", password="pass1234")
+        cls.product = Product.objects.create(
+            name="Blue Rattle", price="9.99", category=cls.category
+        )
+        cls.user = User.objects.create_user(
+            username="tester", email="t@example.com", password="pass1234"
+        )
+        cls.other = User.objects.create_user(
+            username="other", email="o@example.com", password="pass1234"
+        )
 
     # -------- Product listing & detail (existing views) --------
     def test_product_list_view(self):
@@ -29,7 +35,9 @@ class ProductViewAndCommentFormTests(TestCase):
         self.assertContains(resp, self.product.name)
 
     def test_product_detail_get_includes_form_and_comments(self):
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         # Form fields
@@ -41,9 +49,13 @@ class ProductViewAndCommentFormTests(TestCase):
 
     def test_authenticated_user_form_prefilled_with_existing_comment(self):
         # existing comment
-        Comment.objects.create(product=self.product, user=self.user, rating=3, text="Existing")
+        Comment.objects.create(
+            product=self.product, user=self.user, rating=3, text="Existing"
+        )
         self.client.login(username="tester", password="pass1234")
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         form = resp.context["form"]
@@ -54,7 +66,9 @@ class ProductViewAndCommentFormTests(TestCase):
     # -------- Authenticated user comment flow (create/upsert) --------
     def test_authenticated_user_create_comment(self):
         self.client.login(username="tester", password="pass1234")
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         payload = {"rating": 4, "text": "Nice product"}
         resp = self.client.post(url, data=payload, follow=True)
         self.assertEqual(resp.status_code, 200)
@@ -67,9 +81,13 @@ class ProductViewAndCommentFormTests(TestCase):
 
     def test_authenticated_user_update_existing_comment(self):
         # existing
-        Comment.objects.create(product=self.product, user=self.user, rating=3, text="Old")
+        Comment.objects.create(
+            product=self.product, user=self.user, rating=3, text="Old"
+        )
         self.client.login(username="tester", password="pass1234")
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         payload = {"rating": 5, "text": "Updated text"}
         resp = self.client.post(url, data=payload, follow=True)
         self.assertEqual(resp.status_code, 200)
@@ -79,7 +97,9 @@ class ProductViewAndCommentFormTests(TestCase):
 
     # -------- Guest comment validation --------
     def test_guest_comment_missing_required_guest_fields(self):
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         # Missing guest_name & guest_email -> form errors
         payload = {"rating": 5, "text": "Guest text"}
         resp = self.client.post(url, data=payload)
@@ -89,7 +109,9 @@ class ProductViewAndCommentFormTests(TestCase):
         self.assertIn("guest_email", form.errors)
 
     def test_guest_comment_success(self):
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         payload = {
             "rating": 5,
             "text": "Great!",
@@ -98,11 +120,17 @@ class ProductViewAndCommentFormTests(TestCase):
         }
         resp = self.client.post(url, data=payload, follow=True)
         self.assertEqual(resp.status_code, 200)
-        self.assertTrue(Comment.objects.filter(product=self.product, guest_name="Alice").exists())
+        self.assertTrue(
+            Comment.objects.filter(
+                product=self.product, guest_name="Alice"
+            ).exists()
+        )
 
     # -------- Multiple guest comments allowed (no uniqueness) --------
     def test_multiple_guest_comments_allowed(self):
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         base = {
             "rating": 4,
             "guest_name": "Guest",
@@ -111,7 +139,9 @@ class ProductViewAndCommentFormTests(TestCase):
         self.client.post(url, data={**base, "text": "First"})
         self.client.post(url, data={**base, "text": "Second"})
         self.assertEqual(
-            Comment.objects.filter(product=self.product, guest_name="Guest").count(),
+            Comment.objects.filter(
+                product=self.product, guest_name="Guest"
+            ).count(),
             2,
         )
 
@@ -119,10 +149,14 @@ class ProductViewAndCommentFormTests(TestCase):
     def test_user_comment_single_record_enforced(self):
         Comment.objects.create(product=self.product, user=self.user, rating=2)
         self.client.login(username="tester", password="pass1234")
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         self.client.post(url, data={"rating": 5, "text": "Changed"})
         self.assertEqual(
-            Comment.objects.filter(product=self.product, user=self.user).count(),
+            Comment.objects.filter(
+                product=self.product, user=self.user
+            ).count(),
             1,
         )
         comment = Comment.objects.get(product=self.product, user=self.user)
@@ -132,8 +166,12 @@ class ProductViewAndCommentFormTests(TestCase):
     # -------- Related products section presence --------
     def test_related_products_context(self):
         # Add another product in same category to appear as related
-        Product.objects.create(name="Red Rattle", price="5.00", category=self.category)
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        Product.objects.create(
+            name="Red Rattle", price="5.00", category=self.category
+        )
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn("related_products", resp.context)
@@ -150,14 +188,18 @@ class ProductViewAndCommentFormTests(TestCase):
         url = reverse("products")
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
-        products = resp.context.get("products") or resp.context.get("object_list")
+        products = resp.context.get("products") or resp.context.get(
+            "object_list"
+        )
         prod = [p for p in products if p.pk == self.product.pk][0]
         # avg_rating will be None or 0 depending on DB; treat None as 0
         self.assertIn(prod.total_ratings, (0, None))
         self.assertTrue(prod.total_ratings in (0, None))
 
     def test_product_detail_no_comments_annotations_zero(self):
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         prod = resp.context["product"]
@@ -183,7 +225,9 @@ class ProductViewAndCommentFormTests(TestCase):
         url = reverse("products")
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
-        products = resp.context.get("products") or resp.context.get("object_list")
+        products = resp.context.get("products") or resp.context.get(
+            "object_list"
+        )
         prod = [p for p in products if p.pk == self.product.pk][0]
         self.assertAlmostEqual(float(prod.avg_rating), expected_avg, places=2)
         self.assertEqual(prod.total_ratings, 3)
@@ -197,7 +241,9 @@ class ProductViewAndCommentFormTests(TestCase):
             rating=2,
         )
         expected_avg = (4 + 2) / 2
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         prod = resp.context["product"]
@@ -206,7 +252,9 @@ class ProductViewAndCommentFormTests(TestCase):
 
     def test_related_products_ordering_by_rating_and_count(self):
         # Base product gets moderate average (reference)
-        Comment.objects.create(product=self.product, user=self.user, rating=5, text="Top")
+        Comment.objects.create(
+            product=self.product, user=self.user, rating=5, text="Top"
+        )
         Comment.objects.create(
             product=self.product,
             guest_name="G",
@@ -220,8 +268,12 @@ class ProductViewAndCommentFormTests(TestCase):
             rating=5,
         )  # avg ~4.67 (3 ratings)
         # Two related products in same category with varying ratings
-        prod_c = Product.objects.create(name="Amber Rattle", price="7.00", category=self.category)
-        prod_b = Product.objects.create(name="Red Rattle", price="5.00", category=self.category)
+        prod_c = Product.objects.create(
+            name="Amber Rattle", price="7.00", category=self.category
+        )
+        prod_b = Product.objects.create(
+            name="Red Rattle", price="5.00", category=self.category
+        )
         # Amber Rattle: two 5-star ratings (avg 5, count 2)
         Comment.objects.create(product=prod_c, user=self.user, rating=5)
         Comment.objects.create(
@@ -233,7 +285,9 @@ class ProductViewAndCommentFormTests(TestCase):
         # Red Rattle: single 5-star rating (avg 5, count 1)
         Comment.objects.create(product=prod_b, user=self.other, rating=5)
 
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         related = list(resp.context["related_products"])
@@ -247,14 +301,18 @@ class ProductViewAndCommentFormTests(TestCase):
     def test_related_products_limit_max_eight(self):
         # create 10 products; list should still show at most 8 related
         for i in range(10):
-            p = Product.objects.create(name=f"Extra {i}", price="1.00", category=self.category)
+            p = Product.objects.create(
+                name=f"Extra {i}", price="1.00", category=self.category
+            )
             Comment.objects.create(
                 product=p,
                 guest_name="X",
                 guest_email=f"x{i}@ex.com",
                 rating=5,
             )
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        url = reverse(
+            "product_detail", args=[self.category.slug, self.product.pk]
+        )
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
         related = list(resp.context["related_products"])

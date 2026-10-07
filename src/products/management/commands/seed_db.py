@@ -7,11 +7,17 @@ from django.core.management.base import BaseCommand
 from products.models import Category, Product
 
 # The product images shipped with the codebase. Product.image resolves against
-# MEDIA_ROOT, but MEDIA_ROOT is git-ignored - so the files are kept here and get
+# MEDIA_ROOT, but MEDIA_ROOT is git-ignored - so the files are kept
+# here and get
 # copied over when seeding.
 SEED_IMAGE_DIR = Path(settings.BASE_DIR) / "static" / "imgs" / "products"
 
-categories_list = [("boys", "", "boys"), ("girls", "", "girls"), ("toys", "", "toys"), ("outdoor", "", "outdoor")]
+categories_list = [
+    ("boys", "", "boys"),
+    ("girls", "", "girls"),
+    ("toys", "", "toys"),
+    ("outdoor", "", "outdoor"),
+]
 products = [
     {
         "category": "boys",
@@ -126,7 +132,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # TODO: create and add categories and product data
-        self.stdout.write(self.style.SUCCESS("Beginning to seed the database..."))
+        self.stdout.write(
+            self.style.SUCCESS("Beginning to seed the database...")
+        )
 
         created_categories = 0
 
@@ -136,17 +144,30 @@ class Command(BaseCommand):
                 # Check if category already exists
                 if Category.objects.filter(name=category[0]).exists():
                     self.stdout.write(
-                        self.style.WARNING(f"Category '{category[0]}' already exists. Skipping creation.")
+                        self.style.WARNING(
+                            f"Category '{category[0]}' already exists. "
+                            "Skipping creation."
+                        )
                     )
                     continue
                 # Create a new category
-                category = Category.objects.create(name=category[0], description=category[1], slug=category[2])
+                category = Category.objects.create(
+                    name=category[0], description=category[1], slug=category[2]
+                )
                 created_categories += 1
-                self.stdout.write(self.style.SUCCESS(f"Created category: {category.name}"))
+                self.stdout.write(
+                    self.style.SUCCESS(f"Created category: {category.name}")
+                )
         except Exception as err:
-            self.stdout.write(self.style.ERROR(f"Error creating category: {err}"))
+            self.stdout.write(
+                self.style.ERROR(f"Error creating category: {err}")
+            )
 
-        self.stdout.write(self.style.SUCCESS(f"{created_categories} Categories created successfully."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{created_categories} Categories created successfully."
+            )
+        )
 
         # Create products
         created_products = 0
@@ -163,20 +184,30 @@ class Command(BaseCommand):
                         shutil.copy2(source, target)
                         copied_images += 1
                     else:
-                        self.stdout.write(self.style.ERROR(f"Seed image missing: {source}"))
+                        self.stdout.write(
+                            self.style.ERROR(f"Seed image missing: {source}")
+                        )
 
                 # Get the category object, if non-existent abort seeding
-                category = Category.objects.filter(name=product["category"]).first()
+                category = Category.objects.filter(
+                    name=product["category"]
+                ).first()
                 if not category:
                     self.stdout.write(
-                        self.style.ERROR(f"Category '{product['category']}' does not exist. Skipping product creation.")
+                        self.style.ERROR(
+                            f"Category '{product['category']}'"
+                            " does not exist. Skipping product creation."
+                        )
                     )
                     continue
 
                 # Check if product already exists
                 if Product.objects.filter(name=product["name"]).exists():
                     self.stdout.write(
-                        self.style.WARNING(f"Product '{product['name']}' already exists. Skipping creation.")
+                        self.style.WARNING(
+                            f"Product '{product['name']}' already exists. "
+                            "Skipping creation."
+                        )
                     )
                     continue
 
@@ -189,9 +220,17 @@ class Command(BaseCommand):
                     image=product["image"],
                 )
                 created_products += 1
-                self.stdout.write(self.style.SUCCESS(f"Created product: {new_product.name}"))
+                self.stdout.write(
+                    self.style.SUCCESS(f"Created product: {new_product.name}")
+                )
 
-            self.stdout.write(self.style.SUCCESS(f"{created_products} Products created successfully."))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{created_products} Products created successfully."
+                )
+            )
 
         except Exception as err:
-            self.stdout.write(self.style.ERROR(f"Error creating products: {err}"))
+            self.stdout.write(
+                self.style.ERROR(f"Error creating products: {err}")
+            )

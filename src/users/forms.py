@@ -4,26 +4,63 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(UserCreationForm):
-    first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "First Name"}))
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "First Name"}
+        )
+    )
 
-    last_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Last Name"}))
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Last Name"}
+        )
+    )
 
-    username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}))
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Username"}
+        )
+    )
 
-    email = forms.CharField(widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email-Address"}))
+    email = forms.CharField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Email-Address"}
+        )
+    )
 
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}))
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Password"}
+        )
+    )
 
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Repeat Password"})
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Repeat Password"}
+        )
     )
 
     class Meta:
         model = User
-        fields = ["first_name", "last_name", "username", "email", "password1", "password2"]
+        fields = [
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "password1",
+            "password2",
+        ]
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}))
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "Username"}
+        )
+    )
 
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}))
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Password"}
+        )
+    )

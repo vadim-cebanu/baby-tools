@@ -1,55 +1,75 @@
-# Create your views here.
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from .forms import LoginForm, RegisterForm
 
 
-# Create your views here.
-def user_register(request):
-    """This function handles user registrations and will delegate the user to the login page."""
+def user_register(request: HttpRequest) -> HttpResponse:
+    """Handle user registration.
+
+    Args:
+        request: The current HTTP request.
+
+    Returns:
+        HttpResponse: The registration page, or a redirect to the
+        login page after a successful registration.
+    """
     if request.method == "POST":
-        form = RegisterForm(request.POST)
+        form: RegisterForm = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            # messages.success(request,'welcome to the baby tool world')
             return redirect("login")
     else:
         form = RegisterForm()
-
     return render(request, "register.html", {"form": form})
 
 
-def user_login(request):
-    """This function handles user logins and will delegate the user to the home page."""
+def user_login(request: HttpRequest) -> HttpResponse:
+    """Handle user login.
+
+    Args:
+        request: The current HTTP request.
+
+    Returns:
+        HttpResponse: The login page, or a redirect to the home page
+        after a successful login.
+    """
     if request.method == "POST":
-        form = LoginForm(request.POST)
+        form: LoginForm = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(request, username=username, password=password)
+            username: str = form.cleaned_data["username"]
+            password: str = form.cleaned_data["password"]
+            user = authenticate(
+                request, username=username, password=password
+            )
 
             if user is not None:
                 if user.is_active:
                     login(request, user)
                     return redirect("/")
-                else:
-                    messages.info(request, "User is not active")
+                messages.info(request, "User is not active")
             else:
-                messages.info(request, "Something went wrong, maybe check your provided credentials or try again.")
+                messages.info(
+                    request,
+                    "Something went wrong, maybe check your provided "
+                    "credentials or try again.",
+                )
     else:
         form = LoginForm()
 
-    return render(
-        request,
-        "login.html",
-        # the template context dict
-        {"form": form},
-    )
+    return render(request, "login.html", {"form": form})
 
 
-def user_logout(request):
-    """This function handles user logouts and will delegate the user to the home page."""
+def user_logout(request: HttpRequest) -> HttpResponse:
+    """Log out the current user.
+
+    Args:
+        request: The current HTTP request.
+
+    Returns:
+        HttpResponse: A redirect to the home page.
+    """
     logout(request)
     return redirect("/")
