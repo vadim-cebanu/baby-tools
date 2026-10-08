@@ -5,8 +5,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
-# Create your models here.
 class Category(models.Model):
+    """A product category used to group and filter products."""
+
     name = models.CharField(max_length=50, unique=True, null=False, blank=False)
     description = models.TextField(max_length=200, null=True, blank=True)
     slug = models.SlugField(max_length=50, unique=True, null=False, blank=False)
@@ -15,6 +16,7 @@ class Category(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
+        """Return the category name."""
         return self.name
 
     class Meta:
@@ -23,6 +25,8 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    """A baby product that belongs to a category and can be tagged and rated."""
+
     tags = models.ManyToManyField("Tag", blank=True, related_name="products")
     category = models.ForeignKey(Category, null=True, on_delete=models.DO_NOTHING)
     description = models.TextField(max_length=250, null=True, blank=True)
@@ -37,23 +41,30 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # NEW helper properties
     @property
     def average_rating(self):
+        """Return the average comment rating, or 0 if there are no comments."""
         from django.db.models import Avg
 
         return self.comments.aggregate(a=Avg("rating"))["a"] or 0
 
     @property
     def rating_count(self):
+        """Return the number of comments (ratings) for this product."""
         return self.comments.count()
 
     def __str__(self) -> str:
+        """Return the product name."""
         return self.name
 
 
-# NEW model
 class Comment(models.Model):
+    """A rating with optional text, left by a registered user or a guest.
+
+    A registered user can rate a given product only once; guests identify
+    themselves through ``guest_name`` and ``guest_email``.
+    """
+
     product = models.ForeignKey(Product, related_name="comments", on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -84,11 +95,14 @@ class Comment(models.Model):
         indexes = [models.Index(fields=["product", "created_at"])]
 
     def __str__(self):
+        """Return the author and rating, e.g. ``alice - 5★``."""
         who = self.user.username if self.user else (self.guest_name or "Guest")
         return f"{who} - {self.rating}★"
 
 
 class Tag(models.Model):
+    """A free-form label that can be attached to many products."""
+
     name = models.CharField(max_length=50, unique=True, null=False, blank=False)
     created_at = models.DateTimeField(
         auto_now_add=True,

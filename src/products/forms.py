@@ -4,6 +4,8 @@ from .models import Comment
 
 
 class CommentForm(forms.ModelForm):
+    """Form for submitting a product rating and optional comment."""
+
     class Meta:
         model = Comment
         fields = ["rating", "text", "guest_name", "guest_email"]
@@ -13,6 +15,11 @@ class CommentForm(forms.ModelForm):
         }
 
     def clean(self):
+        """Require guest name and email when no user is set in ``initial``.
+
+        Returns:
+            dict: The cleaned form data.
+        """
         data = super().clean()
         user = self.initial.get("user")
         if not user and not data.get("guest_name"):

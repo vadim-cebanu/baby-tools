@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(UserCreationForm):
+    """User registration form with name, email and password fields."""
+
     first_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "First Name"}))
 
     last_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Last Name"}))
@@ -31,6 +33,8 @@ class RegisterForm(UserCreationForm):
 
 
 class LoginForm(forms.Form):
+    """Login form with username and password fields."""
+
     username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}))
 
     password = forms.CharField(widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password"}))

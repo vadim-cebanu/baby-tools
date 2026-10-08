@@ -7,6 +7,16 @@ from .models import Category, Comment, Product
 
 
 def product_list(request, category_slug=None):
+    """Render the product list, optionally filtered by category.
+
+    Args:
+        request: The current HTTP request.
+        category_slug: Slug of the category to filter by; all products if None.
+
+    Returns:
+        HttpResponse: The products page, with average rating and rating
+        count annotated on each product.
+    """
     categories = Category.objects.all()
     products = Product.objects.select_related("category").annotate(
         avg_rating=Avg("comments__rating"), total_ratings=Count("comments")
@@ -21,6 +31,23 @@ def product_list(request, category_slug=None):
 
 
 def product_detail(request, category_slug, pk):
+    """Show a product and handle rating submissions.
+
+    On POST, a logged-in user creates or updates their single rating, while
+    a guest always creates a new one. A valid submission redirects back to
+    the page so the form is shown empty again.
+
+    Args:
+        request: The current HTTP request.
+        category_slug: Slug of the category the product must belong to.
+        pk: Primary key of the product.
+
+    Returns:
+        HttpResponse: The product page, or a redirect after a valid POST.
+
+    Raises:
+        Http404: If no product matches the given category and pk.
+    """
     product = get_object_or_404(
         Product.objects.select_related("category").annotate(
             avg_rating=Avg("comments__rating"), total_ratings=Count("comments")

@@ -128,9 +128,12 @@ products = [
 
 
 class Command(BaseCommand):
+    """Management command that seeds categories and products."""
+
     help = "Seeds the database with initial category and product data"
 
     def handle(self, *args, **kwargs):
+        """Create the seed categories and products and copy their images."""
         # TODO: create and add categories and product data
         self.stdout.write(self.style.SUCCESS("Beginning to seed the database..."))
 
