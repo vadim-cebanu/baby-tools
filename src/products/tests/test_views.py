@@ -39,17 +39,37 @@ class ProductViewAndCommentFormTests(TestCase):
         self.assertIn("form", resp.context)
         self.assertIn("comments", resp.context)
 
-    def test_authenticated_user_form_prefilled_with_existing_comment(self):
-        # existing comment
+    def test_form_is_empty_when_user_already_has_review(self):
+        """A logged-in user with an existing review sees an empty form."""
+        # Step 1: the user already wrote a review earlier
         Comment.objects.create(product=self.product, user=self.user, rating=3, text="Existing")
+
+        # Step 2: the user logs in and opens the product page
         self.client.login(username="tester", password="pass1234")
-        url = reverse("product_detail", args=[self.category.slug, self.product.pk])
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, 200)
-        form = resp.context["form"]
-        # initial data should reflect existing comment
-        self.assertEqual(form.initial.get("rating"), 3)
-        self.assertEqual(form.initial.get("text"), "Existing")
+        page_url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+        page = self.client.get(page_url)
+
+        # Step 3: the form on the page must be empty
+        review_form = page.context["form"]
+        self.assertEqual(review_form.initial, {})
+
+    def test_form_is_empty_after_sending_review(self) -> None:
+        """After sending a review, the review is saved and the form is empty."""
+        # Step 1: the user logs in
+        self.client.login(username="tester", password="pass1234")
+        page_url = reverse("product_detail", args=[self.category.slug, self.product.pk])
+
+        # Step 2: the user sends a review with 4 stars
+        review_data = {"rating": 4, "text": "Great toy"}
+        page = self.client.post(page_url, review_data, follow=True)
+
+        # Step 3: the review is saved in the database
+        saved = Comment.objects.filter(product=self.product, user=self.user, rating=4)
+        self.assertTrue(saved.exists())
+
+        # Step 4: the form on the page must be empty
+        review_form = page.context["form"]
+        self.assertEqual(review_form.initial, {})
 
     # -------- Authenticated user comment flow (create/upsert) --------
     def test_authenticated_user_create_comment(self):
