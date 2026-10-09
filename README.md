@@ -8,6 +8,34 @@ The project was developed for educational purposes only and therefore makes no c
 > [!NOTE]
 > This project assumes you already know the Python programming language.
 
+## Table of Contents
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Quickstart](#quickstart)
+- [Project Structure](#project-structure)
+  - [Apps Overview](#apps-overview)
+- [Usage](#usage)
+  - [Configuration](#configuration)
+  - [Managing product tags](#managing-product-tags)
+  - [Writing reviews](#writing-reviews)
+  - [Seeding the application with data](#seeding-the-application-with-data)
+  - [Running the linting tools](#running-the-linting-tools)
+  - [Testing](#testing)
+  - [Running with a WSGI Server](#running-with-a-wsgi-server)
+  - [Containerization](#containerization)
+
+## Features
+
+- **Products and categories**: products are grouped into categories. Visitors can browse the product list, filter it by category, and open a detail page for each product.
+- **Product detail page**: shows the product information, a rating summary, the product tags, and the customer reviews.
+- **Product tags**: products can have one or more optional tags (e.g. type or age group). Tags are managed in the admin panel and shown on the product detail page. See [Managing product tags](#managing-product-tags).
+- **Reviews**: visitors and logged-in users can rate a product with stars and write a comment. Logged-in users have one review per product, which is updated when they send a new one. See [Writing reviews](#writing-reviews).
+- **User accounts**: users can register, log in, and log out.
+- **Admin panel**: shop owners manage products, categories, and tags, and can filter products by tag.
+- **Example data**: the `seed_db` command fills the database with example categories and products.
+- **Container support**: the application can be built and run as a Docker image.
+
 ## Prerequisites
 
 To work with the repository and the software it contains, you need the following tools installed:
@@ -22,29 +50,29 @@ To work with the repository and the software it contains, you need the following
 To get the application running quickly, follow these steps:
 
 1. Clone the repository:
-    `git clone <repository-url>`
-1. Navigate to the repository:
-    `cd baby-tools`
-1. Create a virtual environment:
-    `python -m venv venv`
-1. Activate the virtual environment:
-    - on Windows run: `venv\Scripts\activate`
-    - on macOS/Linux run: `source venv/bin/activate`
-1. Install the project dependencies:
-    `pip install -r requirements.txt`
-1. Create your environment file from the example (in the root directory of the repository):
-    `cp example.env .env`
-1. Go to the `src` directory:
-    `cd src`
-1. Apply the database migrations:
-    `python manage.py migrate`
-1. (Optional) Fill the database with example categories and products:
-    `python manage.py seed_db`
-1. (Optional) Create an admin user:
+   `git clone <repository-url>`
+2. Navigate to the repository:
+   `cd baby-tools`
+3. Create a virtual environment:
+   `python -m venv venv`
+4. Activate the virtual environment:
+   - on Windows run: `venv\Scripts\activate`
+   - on macOS/Linux run: `source venv/bin/activate`
+5. Install the project dependencies:
+   `pip install -r requirements.txt`
+6. Create your environment file from the example (in the root directory of the repository):
+   `cp example.env .env`
+7. Go to the `src` directory:
+   `cd src`
+8. Apply the database migrations:
+   `python manage.py migrate`
+9. (Optional) Fill the database with example categories and products:
+   `python manage.py seed_db`
+10. (Optional) Create an admin user:
     `python manage.py createsuperuser`
-1. Start the application:
+11. Start the application:
     `python manage.py runserver`
-1. Open `http://localhost:8000` in your browser to check that the application is running.
+12. Open `http://localhost:8000` in your browser to check that the application is running.
 
 ## Project Structure
 
