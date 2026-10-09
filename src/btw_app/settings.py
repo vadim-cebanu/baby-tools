@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,11 +31,16 @@ AUTHOR = os.getenv("AUTHOR")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mnp$i)1zfiga%tre=iv5b97+t$7zji57d$#t4rk_#1@#*^mi9b"
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "true") == "true"
+DEBUG: bool = os.getenv("DEBUG", "true") == "true"
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY: str = os.getenv("SECRET_KEY", "")
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured("SECRET_KEY must be set in production.")
+    # Temporary key for local development and CI tests only.
+    SECRET_KEY = get_random_secret_key()
 host_list = os.getenv("ALLOWED_HOSTS", "localhost, 127.0.0.1, 0.0.0.0")
 
 ALLOWED_HOSTS = [x.strip() for x in host_list.split(",")]

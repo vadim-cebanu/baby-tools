@@ -36,11 +36,16 @@ class CategoryTestCase(TestCase):
     def test_successful_category_creation_with_description(self):
         # Test the creation of a category with a description
         category = Category.objects.create(
-            name=self.test_category_name, description=self.test_category_description, slug=self.test_category_slug
+            name=self.test_category_name,
+            description=self.test_category_description,
+            slug=self.test_category_slug,
         )
         category.full_clean()
         self.assertEqual(Category.objects.count(), 1)
-        self.assertEqual(Category.objects.first().description, self.test_category_description)
+        self.assertEqual(
+            Category.objects.first().description,
+            self.test_category_description,
+        )
         # Ensure name is unique
         self.assertTrue(Category.objects.filter(name=self.test_category_name).exists())
         # Ensure slug is unique
@@ -55,7 +60,10 @@ class CategoryTestCase(TestCase):
             category.full_clean()  # Validate before saving
             category.save()
 
-        self.assertEqual(ctx.exception.message_dict, {"name": ["This field cannot be blank."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"name": ["This field cannot be blank."]},
+        )
         self.assertEqual(Category.objects.count(), 0)
 
     @log_execution
@@ -66,7 +74,10 @@ class CategoryTestCase(TestCase):
             category.full_clean()  # Validate before saving
             category.save()
 
-        self.assertEqual(ctx.exception.message_dict, {"slug": ["This field cannot be blank."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"slug": ["This field cannot be blank."]},
+        )
         self.assertEqual(Category.objects.count(), 0)
 
     @log_execution
@@ -77,7 +88,10 @@ class CategoryTestCase(TestCase):
             duplicate_category.full_clean()
             duplicate_category.save()
         # Ensure only one category exists
-        self.assertEqual(ctx.exception.message_dict, {"name": ["Category with this Name already exists."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"name": ["Category with this Name already exists."]},
+        )
         self.assertEqual(Category.objects.count(), 1)
 
     @log_execution
@@ -89,7 +103,8 @@ class CategoryTestCase(TestCase):
             category.save()
         # Ensure no categories were created
         self.assertEqual(
-            ctx.exception.message_dict, {"name": ["Ensure this value has at most 50 characters (it has 51)."]}
+            ctx.exception.message_dict,
+            {"name": ["Ensure this value has at most 50 characters (it has 51)."]},
         )
         self.assertEqual(Category.objects.count(), 0)
 
@@ -102,7 +117,8 @@ class CategoryTestCase(TestCase):
             category.save()
         # Ensure no categories were created
         self.assertEqual(
-            ctx.exception.message_dict, {"slug": ["Ensure this value has at most 50 characters (it has 51)."]}
+            ctx.exception.message_dict,
+            {"slug": ["Ensure this value has at most 50 characters (it has 51)."]},
         )
         self.assertEqual(Category.objects.count(), 0)
 
@@ -114,7 +130,10 @@ class CategoryTestCase(TestCase):
             duplicate_category.full_clean()
             duplicate_category.save()
         # Ensure only one category exists
-        self.assertEqual(ctx.exception.message_dict, {"slug": ["Category with this Slug already exists."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"slug": ["Category with this Slug already exists."]},
+        )
         self.assertEqual(Category.objects.count(), 1)
 
     @log_execution

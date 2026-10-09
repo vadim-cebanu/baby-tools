@@ -19,9 +19,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Category",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("name", models.CharField(max_length=50, unique=True)),
-                ("description", models.TextField(blank=True, max_length=200, null=True)),
+                (
+                    "description",
+                    models.TextField(blank=True, max_length=200, null=True),
+                ),
                 ("slug", models.SlugField(unique=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
@@ -34,9 +45,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Product",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("description", models.TextField(blank=True, max_length=250, null=True)),
-                ("image", models.ImageField(blank=True, null=True, upload_to="imgs/products/")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, max_length=250, null=True),
+                ),
+                (
+                    "image",
+                    models.ImageField(blank=True, null=True, upload_to="imgs/products/"),
+                ),
                 ("name", models.CharField(max_length=80)),
                 (
                     "price",
@@ -51,7 +76,9 @@ class Migration(migrations.Migration):
                 (
                     "category",
                     models.ForeignKey(
-                        null=True, on_delete=django.db.models.deletion.DO_NOTHING, to="products.category"
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        to="products.category",
                     ),
                 ),
             ],
@@ -59,7 +86,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Comment",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("guest_name", models.CharField(blank=True, max_length=80)),
                 ("guest_email", models.EmailField(blank=True, max_length=254)),
                 (
@@ -77,22 +112,33 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
                 (
                     "product",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="comments", to="products.product"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comments",
+                        to="products.product",
                     ),
                 ),
             ],
             options={
                 "ordering": ["-created_at"],
-                "indexes": [models.Index(fields=["product", "created_at"], name="products_co_product_593a1e_idx")],
+                "indexes": [
+                    models.Index(
+                        fields=["product", "created_at"],
+                        name="products_co_product_593a1e_idx",
+                    )
+                ],
                 "constraints": [
                     models.CheckConstraint(
-                        condition=models.Q(("rating__gte", 1), ("rating__lte", 5)), name="comment_rating_range"
+                        condition=models.Q(("rating__gte", 1), ("rating__lte", 5)),
+                        name="comment_rating_range",
                     ),
                     models.UniqueConstraint(
                         condition=models.Q(("user__isnull", False)),

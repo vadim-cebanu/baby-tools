@@ -82,7 +82,10 @@ class CommentTestCase(TestCase):
             )
             comment.full_clean()
             comment.save()
-        self.assertEqual(ctx.exception.message_dict, {"product": ["This field cannot be null."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"product": ["This field cannot be null."]},
+        )
         self.assertEqual(Comment.objects.count(), 0)
 
     @log_execution
@@ -95,7 +98,10 @@ class CommentTestCase(TestCase):
             )
             comment.full_clean()
             comment.save()
-        self.assertEqual(ctx.exception.message_dict, {"rating": ["This field cannot be null."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"rating": ["This field cannot be null."]},
+        )
         self.assertEqual(Comment.objects.count(), 0)
 
     @log_execution
@@ -108,7 +114,10 @@ class CommentTestCase(TestCase):
                 rating=0,  # min is 1
             )
             comment.full_clean()
-        self.assertEqual(ctx.exception.message_dict, {"rating": ["Ensure this value is greater than or equal to 1."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"rating": ["Ensure this value is greater than or equal to 1."]},
+        )
         self.assertEqual(Comment.objects.count(), 0)
 
     @log_execution
@@ -121,7 +130,10 @@ class CommentTestCase(TestCase):
                 rating=6,  # max is 5
             )
             comment.full_clean()
-        self.assertEqual(ctx.exception.message_dict, {"rating": ["Ensure this value is less than or equal to 5."]})
+        self.assertEqual(
+            ctx.exception.message_dict,
+            {"rating": ["Ensure this value is less than or equal to 5."]},
+        )
         self.assertEqual(Comment.objects.count(), 0)
 
     @log_execution
@@ -144,7 +156,8 @@ class CommentTestCase(TestCase):
             comment.full_clean()
             comment.save()
         self.assertEqual(
-            ctx.exception.message_dict, {"__all__": ["Constraint “unique_user_product_comment” is violated."]}
+            ctx.exception.message_dict,
+            {"__all__": ["Constraint “unique_user_product_comment” is violated."]},
         )
         self.assertEqual(Comment.objects.count(), 1)
 

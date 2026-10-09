@@ -7,11 +7,17 @@ from django.core.management.base import BaseCommand
 from products.models import Category, Product
 
 # The product images shipped with the codebase. Product.image resolves against
-# MEDIA_ROOT, but MEDIA_ROOT is git-ignored - so the files are kept here and get
+# MEDIA_ROOT, but MEDIA_ROOT is git-ignored - so the files are kept
+# here and get
 # copied over when seeding.
 SEED_IMAGE_DIR = Path(settings.BASE_DIR) / "static" / "imgs" / "products"
 
-categories_list = [("boys", "", "boys"), ("girls", "", "girls"), ("toys", "", "toys"), ("outdoor", "", "outdoor")]
+categories_list = [
+    ("boys", "", "boys"),
+    ("girls", "", "girls"),
+    ("toys", "", "toys"),
+    ("outdoor", "", "outdoor"),
+]
 products = [
     {
         "category": "boys",
@@ -122,9 +128,12 @@ products = [
 
 
 class Command(BaseCommand):
+    """Management command that seeds categories and products."""
+
     help = "Seeds the database with initial category and product data"
 
     def handle(self, *args, **kwargs):
+        """Create the seed categories and products and copy their images."""
         # TODO: create and add categories and product data
         self.stdout.write(self.style.SUCCESS("Beginning to seed the database..."))
 
@@ -136,7 +145,7 @@ class Command(BaseCommand):
                 # Check if category already exists
                 if Category.objects.filter(name=category[0]).exists():
                     self.stdout.write(
-                        self.style.WARNING(f"Category '{category[0]}' already exists. Skipping creation.")
+                        self.style.WARNING(f"Category '{category[0]}' already exists. " "Skipping creation.")
                     )
                     continue
                 # Create a new category
@@ -169,14 +178,16 @@ class Command(BaseCommand):
                 category = Category.objects.filter(name=product["category"]).first()
                 if not category:
                     self.stdout.write(
-                        self.style.ERROR(f"Category '{product['category']}' does not exist. Skipping product creation.")
+                        self.style.ERROR(
+                            f"Category '{product['category']}'" " does not exist. Skipping product creation."
+                        )
                     )
                     continue
 
                 # Check if product already exists
                 if Product.objects.filter(name=product["name"]).exists():
                     self.stdout.write(
-                        self.style.WARNING(f"Product '{product['name']}' already exists. Skipping creation.")
+                        self.style.WARNING(f"Product '{product['name']}' already exists. " "Skipping creation.")
                     )
                     continue
 
